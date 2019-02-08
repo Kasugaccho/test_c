@@ -6,6 +6,8 @@
 
 namespace dtl {
 
+	using Shogi_Point = std::pair<std::int_fast32_t, std::int_fast32_t>;
+
 	enum :std::uint_fast8_t {
 		shogi_empty,
 		shogi_empty2,
@@ -64,6 +66,39 @@ namespace dtl {
 		shogi_tokin1,
 		shogi_fuhyo2,
 		shogi_tokin2
+	};
+
+	constexpr std::size_t shogi_hand_piece_num{ 40 };
+	class ShogiHand
+	{
+	public:
+		bool setPiece(const std::uint_fast8_t piece_) noexcept {
+			for (std::size_t i{}; i < shogi_hand_piece_num; ++i)
+				if (piece[i] == 0) {
+					piece[i] = piece_;
+					return true;
+				}
+			return false;
+		}
+		bool searchPiece(const std::uint_fast8_t piece_) noexcept {
+			for (std::size_t i{}; i < shogi_hand_piece_num; ++i)
+				if (piece[i] == piece_) return true;
+			return false;
+		}
+		bool usePiece(const std::uint_fast8_t piece_) noexcept {
+			for (std::size_t i{}; i < shogi_hand_piece_num; ++i)
+				if (piece[i] == piece_) {
+					piece[i] = 0;
+					return true;
+				}
+			return false;
+		}
+		std::uint_fast8_t operator[](const std::size_t num_) noexcept {
+			return piece[num_];
+		}
+
+	private:
+		std::array<std::uint_fast8_t, shogi_hand_piece_num> piece{ {} };
 	};
 
 	template<typename Matrix_>
@@ -192,79 +227,102 @@ namespace dtl {
 	constexpr std::int_fast32_t fly_walk{ std::numeric_limits<std::int_fast32_t>::max() };
 
 	
+	constexpr std::size_t getPoint(const Shogi_Point& point_) noexcept {
+		const std::int_fast32_t num_x{ (point_.first == 0) ? 1 : ((point_.first > 0) ? 2 : 0) };
+		const std::int_fast32_t num_y{ (point_.second == 0) ? 1 : ((point_.second > 0) ? 2 : 0) };
+		std::int_fast32_t num{ num_x + 3 * num_y };
+		if (num >= 5) --num;
+		return std::move(num);
+	}
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 8> osho_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,-1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,-1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,-1)
-	};
+	template<typename Matrix_>
+	constexpr auto getMatrixValue(const Matrix_& matrix_, const Shogi_Point& point_) noexcept {
+		return matrix_[point_.second][point_.first];
+	}
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 8> ryuma_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,-fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,-fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,-1)
-	};
+	template<typename Matrix_>
+	bool isPutPiece(Matrix_& matrix_, const Shogi_Point& before_, const Shogi_Point& after_, const bool turn_) noexcept {
+		const auto after_value{ getMatrixValue(matrix_,after_) };
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 8> ryuo_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,-fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,-1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,-1)
-	};
+		getPoint(after_);
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 4> kakugyo_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,-fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,-fly_walk)
+		//0 1 2
+		//3 ~ 4
+		//5 6 7
+	}
+
+	constexpr std::array<Shogi_Point, 8> osho_walk{
+		Shogi_Point(-1,-1),
+		Shogi_Point(-1,0),
+Shogi_Point(-1,1),
+Shogi_Point(0,-1),
+Shogi_Point(0,1),
+Shogi_Point(1,-1),
+Shogi_Point(1,0),
+Shogi_Point(1,1)
 	};
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 4> hisha_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,fly_walk),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,0),
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,-fly_walk)
+	constexpr std::array<Shogi_Point, 8> ryuma_walk{
+Shogi_Point(-fly_walk,fly_walk),
+Shogi_Point(fly_walk,fly_walk),
+Shogi_Point(-fly_walk,-fly_walk),
+Shogi_Point(fly_walk,-fly_walk),
+Shogi_Point(0,1),
+Shogi_Point(-1,0),
+Shogi_Point(1,0),
+Shogi_Point(0,-1)
 	};
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 2> keima_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,2),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,2)
+	constexpr std::array<Shogi_Point, 8> ryuo_walk{
+Shogi_Point(0,fly_walk),
+Shogi_Point(-fly_walk,0),
+Shogi_Point(fly_walk,0),
+Shogi_Point(0,-fly_walk),
+Shogi_Point(-1,1),
+Shogi_Point(1,1),
+Shogi_Point(-1,-1),
+Shogi_Point(1,-1)
 	};
 
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 1> kyosha_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,fly_walk)
+	constexpr std::array<Shogi_Point, 4> kakugyo_walk{
+Shogi_Point(-fly_walk,fly_walk),
+Shogi_Point(fly_walk,fly_walk),
+Shogi_Point(-fly_walk,-fly_walk),
+Shogi_Point(fly_walk,-fly_walk)
 	};
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 5> ginsho_walk{
-std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(-1,-1),
-std::pair<std::int_fast32_t, std::int_fast32_t>(1,-1)
+
+	constexpr std::array<Shogi_Point, 4> hisha_walk{
+Shogi_Point(0,fly_walk),
+Shogi_Point(-fly_walk,0),
+Shogi_Point(fly_walk,0),
+Shogi_Point(0,-fly_walk)
 	};
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 6> kinsho_walk{
-	std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
-	std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
-	std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
-	std::pair<std::int_fast32_t, std::int_fast32_t>(-1,0),
-	std::pair<std::int_fast32_t, std::int_fast32_t>(1,0),
-	std::pair<std::int_fast32_t, std::int_fast32_t>(0,-1)
+
+	constexpr std::array<Shogi_Point, 2> keima_walk{
+Shogi_Point(-1,2),
+Shogi_Point(1,2)
 	};
-	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 1> fuhyo_walk{
-		std::pair<std::int_fast32_t, std::int_fast32_t>(0,1)
+
+	constexpr std::array<Shogi_Point, 1> kyosha_walk{
+Shogi_Point(0,fly_walk)
+	};
+	constexpr std::array<Shogi_Point, 5> ginsho_walk{
+Shogi_Point(0,1),
+Shogi_Point(-1,1),
+Shogi_Point(1,1),
+Shogi_Point(-1,-1),
+Shogi_Point(1,-1)
+	};
+	constexpr std::array<Shogi_Point, 6> kinsho_walk{
+	Shogi_Point(0,1),
+	Shogi_Point(-1,1),
+	Shogi_Point(1,1),
+	Shogi_Point(-1,0),
+	Shogi_Point(1,0),
+	Shogi_Point(0,-1)
+	};
+	constexpr std::array<Shogi_Point, 1> fuhyo_walk{
+		Shogi_Point(0,1)
 	};
 
 }
