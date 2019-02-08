@@ -1,18 +1,33 @@
 ﻿#pragma once
 #include <cstddef>
+#include <cstdint>
+#include <array>
+#include <limits>
 
 namespace dtl {
 
-	enum :std::size_t {
+	enum :std::uint_fast8_t {
 		shogi_empty,
+		shogi_empty2,
+		shogi_empty3,
+		shogi_empty4,
+
 		shogi_next_place1,
 		shogi_next_place2,
+		shogi_next_all_place1,
+		shogi_next_all_place2,
+		
 		//王将&玉将
 		shogi_osho,
+		shogi_1,
 		shogi_gyokusho,
+		shogi_2,
+		
 		//金将
 		shogi_kinsho1,
+		shogi_3,
 		shogi_kinsho2,
+		shogi_4,
 
 		//ここより先は成る。----------------------------------------
 
@@ -173,5 +188,83 @@ namespace dtl {
 			std::cout << std::endl;
 		}
 	}
+
+	constexpr std::int_fast32_t fly_walk{ std::numeric_limits<std::int_fast32_t>::max() };
+
+	
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 8> osho_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,-1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,-1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,-1)
+	};
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 8> ryuma_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,-fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,-fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,-1)
+	};
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 8> ryuo_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,-fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,-1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,-1)
+	};
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 4> kakugyo_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,-fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,-fly_walk)
+	};
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 4> hisha_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,fly_walk),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-fly_walk,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(fly_walk,0),
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,-fly_walk)
+	};
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 2> keima_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,2),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,2)
+	};
+
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 1> kyosha_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,fly_walk)
+	};
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 5> ginsho_walk{
+std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(-1,-1),
+std::pair<std::int_fast32_t, std::int_fast32_t>(1,-1)
+	};
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 6> kinsho_walk{
+	std::pair<std::int_fast32_t, std::int_fast32_t>(0,1),
+	std::pair<std::int_fast32_t, std::int_fast32_t>(-1,1),
+	std::pair<std::int_fast32_t, std::int_fast32_t>(1,1),
+	std::pair<std::int_fast32_t, std::int_fast32_t>(-1,0),
+	std::pair<std::int_fast32_t, std::int_fast32_t>(1,0),
+	std::pair<std::int_fast32_t, std::int_fast32_t>(0,-1)
+	};
+	constexpr std::array<std::pair<std::int_fast32_t, std::int_fast32_t>, 1> fuhyo_walk{
+		std::pair<std::int_fast32_t, std::int_fast32_t>(0,1)
+	};
 
 }
