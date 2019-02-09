@@ -128,6 +128,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="Shogi.hpp" />
+    <ClInclude Include="ShogiData.hpp" />
+    <ClInclude Include="ShogiAI.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
