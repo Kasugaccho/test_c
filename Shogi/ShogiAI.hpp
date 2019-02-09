@@ -1,6 +1,6 @@
 #ifndef INCLUDED_DUNGEON_TEMPLATE_LIBRARY_SHOGI_AI
 #define INCLUDED_DUNGEON_TEMPLATE_LIBRARY_SHOGI_AI
-#include "Shogi.hpp"
+#include "ShogiData.hpp"
 #include <cstddef>
 #include <cstdint>
 
@@ -9,6 +9,16 @@ namespace dtl {
 
 	//‚±‚±‚Éˆ—(ŠÖ”‚âƒNƒ‰ƒX)‚ğ‘‚­
 
+	class SampleAI
+	{
+	public:
+		SampleAI() {
+
+		}
+
+	private:
+
+	};
 
 
 

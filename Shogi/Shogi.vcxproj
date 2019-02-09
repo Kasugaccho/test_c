@@ -130,6 +130,7 @@
     <ClInclude Include="Shogi.hpp" />
     <ClInclude Include="ShogiData.hpp" />
     <ClInclude Include="ShogiAI.hpp" />
+    <ClInclude Include="ShogiOutput.hpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp" />
